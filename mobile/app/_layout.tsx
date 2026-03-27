@@ -11,10 +11,10 @@ const TABS: Array<{
   iconActive: IoniconsName
 }> = [
   { name: 'index', title: 'Home', icon: 'home-outline', iconActive: 'home' },
-  { name: 'find/index', title: 'Find', icon: 'search-outline', iconActive: 'search' },
-  { name: 'appointments/index', title: 'Appointments', icon: 'calendar-outline', iconActive: 'calendar' },
-  { name: 'guide/index', title: 'Guide', icon: 'book-outline', iconActive: 'book' },
-  { name: 'profile/index', title: 'Profile', icon: 'person-outline', iconActive: 'person' },
+  { name: 'find', title: 'Find', icon: 'search-outline', iconActive: 'search' },
+  { name: 'appointments', title: 'Appointments', icon: 'calendar-outline', iconActive: 'calendar' },
+  { name: 'guide', title: 'Guide', icon: 'book-outline', iconActive: 'book' },
+  { name: 'profile', title: 'Profile', icon: 'person-outline', iconActive: 'person' },
 ]
 
 export default function RootLayout() {
