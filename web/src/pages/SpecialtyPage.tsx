@@ -9,7 +9,7 @@ export default function SpecialtyPage() {
   const { slug } = useParams<{ slug: string }>()
   const specialty = specialties.find(s => s.slug === slug)
   if (!specialty) return <div className="text-center py-24 text-[#94A3B8]">Specialty not found. <Link to="/specialties" className="text-[#1A6BCC] hover:underline">All specialties</Link></div>
-  const Icon = (Icons as Record<string, React.ElementType>)[specialty.icon_name] ?? Icons.Stethoscope
+  const Icon = (Icons as unknown as Record<string, React.ElementType>)[specialty.icon_name] ?? Icons.Stethoscope
   const specialtyDoctors = doctors.filter(d => d.specialty.slug === slug)
 
   return (

@@ -13,7 +13,7 @@ export default function SpecialtiesPage() {
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
           {specialties.map(s => {
-            const Icon = (Icons as Record<string, React.ElementType>)[s.icon_name] ?? Icons.Stethoscope
+            const Icon = (Icons as unknown as Record<string, React.ElementType>)[s.icon_name] ?? Icons.Stethoscope
             return (
               <Link key={s.id} to={`/specialties/${s.slug}`}
                 className="bg-white rounded-[12px] border border-[#E2E8F0] p-5 hover:shadow-md transition-all hover:-translate-y-0.5 flex items-start gap-4"
