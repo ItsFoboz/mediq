@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Clock, Calendar, ArrowLeft, ExternalLink } from 'lucide-react'
+import { Clock, Calendar, ArrowLeft } from 'lucide-react'
 import type { GuideArticle } from '@mediq/shared'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'

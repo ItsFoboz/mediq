@@ -1,5 +1,5 @@
 import { Navigate, Link } from 'react-router-dom'
-import { Bell, Moon, Globe, CreditCard, LogOut } from 'lucide-react'
+import { Bell, Globe, CreditCard, LogOut } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { useSubscription } from '@/hooks/useSubscription'
 

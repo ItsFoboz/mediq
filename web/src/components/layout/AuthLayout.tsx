@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Outlet, useLocation, Navigate } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
@@ -152,7 +152,6 @@ function AuthModal({ onClose }: { onClose: () => void }) {
 
 export default function AuthLayout() {
   const { user } = useAuthStore()
-  const location = useLocation()
   const [showModal, setShowModal] = useState(true)
 
   if (user) {

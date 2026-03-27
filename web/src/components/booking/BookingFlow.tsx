@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle, Calendar, User, CreditCard, Check } from 'lucide-react'
-import type { PaymentMethod } from '@mediq/shared'
 import { formatDate, formatTime } from '@mediq/shared'
 import { doctors } from '@/data/doctors'
 import { useBookingStore } from '@/store/bookingStore'
@@ -39,8 +38,10 @@ export default function BookingFlow({ doctorId }: BookingFlowProps) {
     <div className="text-center py-20 text-[#94A3B8]">Doctor not found</div>
   )
 
+  const currentStep = typeof store.step === 'number' ? store.step : 1
+
   const goTo = (next: number) => {
-    setDir(next > store.step ? 1 : -1)
+    setDir(next > currentStep ? 1 : -1)
     store.setStep(next as 1 | 2 | 3)
   }
 
@@ -59,9 +60,7 @@ export default function BookingFlow({ doctorId }: BookingFlowProps) {
           <CheckCircle size={36} className="text-[#0D9E6E]" />
         </div>
         <h2 className="text-2xl font-serif font-bold text-[#0F172A] mb-2">Booking Confirmed!</h2>
-        <p className="text-[#64748B] mb-1">
-          Your appointment with <strong>{doctor.name}</strong>
-        </p>
+        <p className="text-[#64748B] mb-1">Your appointment with <strong>{doctor.name}</strong></p>
         {store.selectedSlot && (
           <p className="text-[#64748B] mb-6">
             {formatDate(store.selectedSlot)} at {formatTime(store.selectedSlot)}
@@ -71,7 +70,7 @@ export default function BookingFlow({ doctorId }: BookingFlowProps) {
           A confirmation email has been sent. You'll receive an SMS reminder 2 days before your appointment.
         </p>
         <div className="flex gap-3 justify-center">
-          <Button variant="primary" onClick={() => navigate('/profile/appointments')}>View Appointments</Button>
+          <Button variant="primary" onClick={() => navigate('/appointments')}>View Appointments</Button>
           <Button variant="secondary" onClick={() => navigate('/')}>Back to Home</Button>
         </div>
       </motion.div>
@@ -80,7 +79,6 @@ export default function BookingFlow({ doctorId }: BookingFlowProps) {
 
   return (
     <div className="max-w-lg mx-auto">
-      {/* Doctor summary */}
       <div className="flex items-center gap-3 mb-6 p-4 bg-white rounded-[12px] border border-[#E2E8F0]">
         <img src={doctor.photo_url} alt={doctor.name}
           className="w-12 h-12 rounded-full object-cover"
@@ -91,12 +89,11 @@ export default function BookingFlow({ doctorId }: BookingFlowProps) {
         </div>
       </div>
 
-      {/* Step indicators */}
       <div className="flex items-center mb-8">
         {STEPS.map((step, i) => {
           const stepNum = i + 1
-          const done = store.step > stepNum
-          const active = store.step === stepNum
+          const done = currentStep > stepNum
+          const active = currentStep === stepNum
           return (
             <div key={step.label} className="flex items-center flex-1">
               <div className="flex flex-col items-center">
@@ -117,26 +114,25 @@ export default function BookingFlow({ doctorId }: BookingFlowProps) {
         })}
       </div>
 
-      {/* Step content */}
       <div className="bg-white rounded-[16px] border border-[#E2E8F0] p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
         <AnimatePresence mode="wait" custom={dir}>
           <motion.div key={store.step} custom={dir} variants={slideVariants}
             initial="enter" animate="center" exit="exit" transition={{ duration: 0.18 }}>
 
-            {store.step === 1 && (
+            {currentStep === 1 && (
               <div>
                 <h2 className="text-lg font-semibold text-[#0F172A] mb-4">Select a time slot</h2>
                 <SlotPicker
                   doctor={doctor}
                   selectedSlot={store.selectedSlot}
                   selectedClinicId={store.clinicId ?? doctor.clinics[0]?.clinic_id}
-                  onSlotSelect={slot => store.setField('selectedSlot', slot)}
-                  onClinicSelect={id => store.setField('clinicId', id)}
+                  onSlotSelect={slot => store.setSelectedSlot(slot)}
+                  onClinicSelect={id => store.setClinicId(id)}
                 />
               </div>
             )}
 
-            {store.step === 2 && (
+            {currentStep === 2 && (
               <div className="space-y-5">
                 <h2 className="text-lg font-semibold text-[#0F172A]">Your Details</h2>
                 <div>
@@ -144,14 +140,14 @@ export default function BookingFlow({ doctorId }: BookingFlowProps) {
                     Reason for visit <span className="text-[#94A3B8] font-normal">(optional)</span>
                   </label>
                   <textarea
-                    value={store.reason}
-                    onChange={e => store.setField('reason', e.target.value)}
+                    value={store.reasonForVisit}
+                    onChange={e => store.setReasonForVisit(e.target.value)}
                     placeholder="Brief description of your symptoms or concerns…"
                     maxLength={200}
                     rows={3}
                     className="w-full text-sm border border-[#E2E8F0] rounded-lg px-3 py-2.5 text-[#0F172A] placeholder:text-[#94A3B8] outline-none focus:border-[#1A6BCC] resize-none"
                   />
-                  <p className="text-xs text-[#94A3B8] text-right mt-1">{store.reason.length}/200</p>
+                  <p className="text-xs text-[#94A3B8] text-right mt-1">{store.reasonForVisit.length}/200</p>
                 </div>
                 <div>
                   <label className="flex items-center gap-2.5 cursor-pointer">
@@ -163,11 +159,11 @@ export default function BookingFlow({ doctorId }: BookingFlowProps) {
                   <p className="text-sm font-medium text-[#0F172A] mb-3">Payment method</p>
                   <PaymentMethodSelector
                     value={store.paymentMethod}
-                    onChange={m => store.setField('paymentMethod', m)}
+                    onChange={m => store.setPaymentMethod(m)}
                     acceptsNhif={doctor.accepts_nhif}
                     acceptedInsurers={doctor.accepted_insurers}
                     insurerName={store.insurerName}
-                    onInsurerChange={n => store.setField('insurerName', n)}
+                    onInsurerChange={n => store.setInsurerName(n)}
                   />
                 </div>
                 <div>
@@ -175,8 +171,8 @@ export default function BookingFlow({ doctorId }: BookingFlowProps) {
                     Notes for doctor <span className="text-[#94A3B8] font-normal">(optional)</span>
                   </label>
                   <textarea
-                    value={store.notes}
-                    onChange={e => store.setField('notes', e.target.value)}
+                    value={store.specialNotes}
+                    onChange={e => store.setSpecialNotes(e.target.value)}
                     placeholder="Anything else you'd like the doctor to know…"
                     rows={2}
                     className="w-full text-sm border border-[#E2E8F0] rounded-lg px-3 py-2.5 text-[#0F172A] placeholder:text-[#94A3B8] outline-none focus:border-[#1A6BCC] resize-none"
@@ -185,14 +181,22 @@ export default function BookingFlow({ doctorId }: BookingFlowProps) {
               </div>
             )}
 
-            {store.step === 3 && (
+            {currentStep === 3 && (
               <div className="space-y-5">
                 <h2 className="text-lg font-semibold text-[#0F172A]">Confirm your booking</h2>
                 <div className="bg-[#F7F9FC] rounded-[12px] p-4 space-y-3 text-sm">
                   <div className="flex justify-between"><span className="text-[#64748B]">Doctor</span><span className="font-medium text-[#0F172A]">{doctor.name}</span></div>
-                  {store.selectedSlot && <div className="flex justify-between"><span className="text-[#64748B]">Date & Time</span><span className="font-medium text-[#0F172A]">{formatDate(store.selectedSlot)} · {formatTime(store.selectedSlot)}</span></div>}
+                  {store.selectedSlot && (
+                    <div className="flex justify-between">
+                      <span className="text-[#64748B]">Date & Time</span>
+                      <span className="font-medium text-[#0F172A]">{formatDate(store.selectedSlot)} · {formatTime(store.selectedSlot)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between"><span className="text-[#64748B]">Payment</span><span className="font-medium text-[#0F172A] capitalize">{store.paymentMethod ?? '—'}</span></div>
-                  <div className="flex justify-between border-t border-[#E2E8F0] pt-3 mt-3"><span className="font-semibold text-[#0F172A]">Consultation fee</span><span className="font-bold text-[#0F172A]">{doctor.price_consultation_bgn} BGN</span></div>
+                  <div className="flex justify-between border-t border-[#E2E8F0] pt-3 mt-3">
+                    <span className="font-semibold text-[#0F172A]">Consultation fee</span>
+                    <span className="font-bold text-[#0F172A]">{doctor.price_consultation_bgn} BGN</span>
+                  </div>
                 </div>
                 <label className="flex items-start gap-2.5 cursor-pointer">
                   <input type="checkbox" checked={gdprConsent} onChange={e => setGdprConsent(e.target.checked)} className="w-4 h-4 mt-0.5 accent-[#1A6BCC]" />
@@ -207,17 +211,16 @@ export default function BookingFlow({ doctorId }: BookingFlowProps) {
         </AnimatePresence>
       </div>
 
-      {/* Navigation */}
       <div className="flex items-center justify-between mt-6">
-        {store.step > 1 ? (
-          <Button variant="secondary" onClick={() => goTo(store.step - 1)}>Back</Button>
+        {currentStep > 1 ? (
+          <Button variant="secondary" onClick={() => goTo(currentStep - 1)}>Back</Button>
         ) : <div />}
 
-        {store.step < 3 ? (
+        {currentStep < 3 ? (
           <Button
             variant="primary"
-            disabled={store.step === 1 ? !store.selectedSlot : !store.paymentMethod}
-            onClick={() => goTo(store.step + 1)}
+            disabled={currentStep === 1 ? !store.selectedSlot : !store.paymentMethod}
+            onClick={() => goTo(currentStep + 1)}
           >
             Continue
           </Button>

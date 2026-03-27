@@ -8,11 +8,11 @@ import SearchResults from '@/components/search/SearchResults'
 export default function CityPage() {
   const { slug } = useParams<{ slug: string }>()
   const city = cities.find(c => c.slug === slug)
-  const { setCity } = useSearchStore()
+  const { setFilter } = useSearchStore()
 
   useEffect(() => {
-    if (city) setCity(city.name)
-    return () => setCity('')
+    if (city) setFilter('city', city.name)
+    return () => setFilter('city', '')
   }, [city?.name])
 
   if (!city) return <div className="text-center py-24 text-[#94A3B8]">City not found. <Link to="/doctors" className="text-[#1A6BCC] hover:underline">All doctors</Link></div>

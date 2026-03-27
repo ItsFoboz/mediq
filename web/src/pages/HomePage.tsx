@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Users, MapPin, CheckCircle, Shield,
-  Stethoscope, Heart, Scan, Baby, Baby2, Brain,
+  Stethoscope, Heart, Scan, Baby, Brain,
   Smile, Bone, Activity, Ear,
   Search, Star, Calendar, ArrowRight,
   Building2, Quote
@@ -13,7 +13,6 @@ import { Badge } from '@/components/ui/Badge'
 import { StarRating } from '@/components/ui/StarRating'
 import { doctors } from '@/data/doctors'
 import { specialties } from '@/data/specialties'
-import { cities } from '@/data/cities'
 
 // ─── Inline SearchBar for hero ─────────────────────────────────────────────
 
@@ -59,7 +58,7 @@ const specialtyPills = [
 ]
 
 const iconMap: Record<string, React.FC<{ size?: number; className?: string }>> = {
-  Stethoscope, Heart, Scan, Baby, Baby2, Brain, Smile, Bone, Activity, Ear,
+  Stethoscope, Heart, Scan, Baby, Brain, Smile, Bone, Activity, Ear,
 }
 
 // ─── Testimonials ───────────────────────────────────────────────────────────

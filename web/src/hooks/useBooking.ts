@@ -27,20 +27,18 @@ export function useBooking(doctorId?: string) {
     }
 
     try {
-      // In production: create appointment in Supabase
-      // For demo: simulate success
       await new Promise((resolve) => setTimeout(resolve, 1200))
       console.log('Booking confirmed:', {
         doctorId,
         clinicId: store.clinicId,
         slot: store.selectedSlot,
         paymentMethod: store.paymentMethod,
-        reason: store.reason,
-        notes: store.notes,
+        reason: store.reasonForVisit,
+        notes: store.specialNotes,
         userId: user.id,
       })
       return { success: true }
-    } catch (err) {
+    } catch {
       return { success: false, error: 'Failed to confirm booking. Please try again.' }
     }
   }

@@ -30,18 +30,13 @@ export default function GuideArticlePage() {
           <h1 className="text-4xl font-serif font-bold text-[#0F172A] mt-4 mb-3">{article.title}</h1>
           <p className="text-lg text-[#64748B] mb-4">{article.excerpt}</p>
           <div className="flex items-center gap-4 text-sm text-[#94A3B8]">
-            <span className="flex items-center gap-1"><Clock size={14} />{article.reading_time_min} min read</span>
+            <span className="flex items-center gap-1"><Clock size={14} />{article.reading_time_minutes} min read</span>
             <span>Last updated: January 2025</span>
           </div>
         </div>
 
         <div className="bg-white rounded-[16px] border border-[#E2E8F0] p-8 mb-8" style={{ boxShadow: 'var(--shadow-card)' }}>
-          {article.content_outline.map((section, i) => (
-            <div key={i} className="mb-8 last:mb-0">
-              <h2 className="text-xl font-serif font-bold text-[#0F172A] mb-3">{section.heading}</h2>
-              <p className="text-[#64748B] leading-relaxed">{section.body}</p>
-            </div>
-          ))}
+          <p className="text-[#64748B] leading-relaxed whitespace-pre-wrap">{article.content}</p>
         </div>
 
         {article.key_phrases && article.key_phrases.length > 0 && (
@@ -50,8 +45,8 @@ export default function GuideArticlePage() {
             <div className="space-y-3">
               {article.key_phrases.map((p, i) => (
                 <div key={i} className="grid grid-cols-3 gap-3 text-sm py-2 border-b border-[#F1F5F9] last:border-0">
-                  <span className="font-medium text-[#0F172A]">{p.english}</span>
-                  <span className="text-[#1A6BCC]">{p.bulgarian}</span>
+                  <span className="font-medium text-[#0F172A]">{p.phrase}</span>
+                  <span className="text-[#1A6BCC]">{p.translation}</span>
                   <span className="text-[#94A3B8] italic">{p.phonetic}</span>
                 </div>
               ))}

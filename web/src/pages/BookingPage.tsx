@@ -16,7 +16,7 @@ export default function BookingPage() {
   return (
     <div style={{ background: 'var(--bg-base)' }} className="min-h-screen">
       <div className="max-w-2xl mx-auto px-4 py-10">
-        <BookingFlow doctor={doctor} />
+        <BookingFlow doctorId={doctor.id} />
       </div>
     </div>
   )
