@@ -41,6 +41,8 @@ supabase/.temp/
 
 # TypeScript
 *.tsbuildinfo
+vite.config.js
+vite.config.d.ts
 
 # Editor
 .vscode/
