@@ -1,0 +1,12 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@mediq/shared": ["../packages/shared/src"],
+      "@mediq/shared/*": ["../packages/shared/src/*"],
+      "@/*": ["./*"]
+    }
+  }
+}
