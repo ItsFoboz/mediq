@@ -56,7 +56,7 @@ export default function DoctorCard({ doctor, isFavorite, onFavorite, skeleton }:
             }}
           />
           <div className="min-w-0">
-            <h3 className="font-semibold text-[#0F172A] text-base leading-tight truncate">{doctor.name}</h3>
+            <h3 className="font-sans font-semibold text-[#0F172A] text-base leading-tight truncate">{doctor.name}</h3>
             <p className="text-sm text-[#64748B] mt-0.5">
               {doctor.specialty.name_en}{' '}
               <span className="text-[#94A3B8]">({doctor.specialty.name_bg})</span>
