@@ -1,22 +1,5 @@
 import React from 'react'
 
-type ClassValue = string | undefined | null | false | Record<string, boolean>
-
-function cn(...classes: ClassValue[]): string {
-  const result: string[] = []
-  for (const cls of classes) {
-    if (!cls) continue
-    if (typeof cls === 'string') {
-      result.push(cls)
-    } else if (typeof cls === 'object') {
-      for (const [key, val] of Object.entries(cls)) {
-        if (val) result.push(key)
-      }
-    }
-  }
-  return result.join(' ')
-}
-
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline'
   size?: 'sm' | 'md' | 'lg'
@@ -26,92 +9,70 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean
 }
 
-const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
-  primary:
-    'bg-[#1A6BCC] text-white hover:bg-[#155BA8] active:bg-[#1254A0] border-transparent',
-  secondary:
-    'bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F7F9FC] active:bg-[#EEF2F7]',
-  ghost:
-    'bg-transparent text-[#1A6BCC] hover:bg-[#1A6BCC]/10 active:bg-[#1A6BCC]/20 border-transparent',
-  danger:
-    'bg-[#DC2626] text-white hover:bg-red-700 active:bg-red-800 border-transparent',
-  outline:
-    'bg-transparent border-2 border-[#1A6BCC] text-[#1A6BCC] hover:bg-[#1A6BCC] hover:text-white active:bg-[#155BA8] active:text-white',
-}
-
-const sizeClasses: Record<NonNullable<ButtonProps['size']>, string> = {
-  sm: 'px-3 py-1.5 text-sm rounded-lg gap-1.5',
-  md: 'px-4 py-2 text-sm font-medium rounded-lg gap-2',
-  lg: 'px-6 py-3 text-base font-semibold rounded-lg gap-2.5',
-}
-
 const Spinner: React.FC<{ size: NonNullable<ButtonProps['size']> }> = ({ size }) => {
   const dim = size === 'sm' ? 14 : size === 'md' ? 16 : 20
   return (
-    <svg
-      width={dim}
-      height={dim}
-      viewBox="0 0 24 24"
-      fill="none"
-      className="animate-spin"
-      aria-hidden="true"
-    >
-      <circle
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeDasharray="31.4 31.4"
-        strokeDashoffset="0"
-        opacity="0.3"
-      />
-      <path
-        d="M12 2a10 10 0 0 1 10 10"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
+    <svg width={dim} height={dim} viewBox="0 0 24 24" fill="none" className="animate-spin" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeLinecap="round"
+        strokeDasharray="31.4 31.4" strokeDashoffset="0" opacity="0.3" />
+      <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
     </svg>
   )
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      variant = 'primary',
-      size = 'md',
-      isLoading = false,
-      leftIcon,
-      rightIcon,
-      fullWidth = false,
-      children,
-      className,
-      disabled,
-      ...props
-    },
-    ref
-  ) => {
+  ({ variant = 'primary', size = 'md', isLoading = false, leftIcon, rightIcon, fullWidth = false,
+     children, className = '', disabled, style, ...props }, ref) => {
     const isDisabled = disabled || isLoading
+
+    const base: React.CSSProperties = {
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
+      fontFamily: 'var(--font-body)',
+      fontWeight: 600,
+      letterSpacing: '-0.01em',
+      lineHeight: 1,
+      border: 'none',
+      cursor: isDisabled ? 'not-allowed' : 'pointer',
+      opacity: isDisabled ? 0.4 : 1,
+      transition: 'all 150ms ease-out',
+      whiteSpace: 'nowrap' as const,
+      userSelect: 'none' as const,
+      textDecoration: 'none',
+      ...(fullWidth ? { width: '100%' } : {}),
+    }
+
+    const sizes: Record<NonNullable<ButtonProps['size']>, React.CSSProperties> = {
+      sm: { height: '36px', padding: '0 16px', fontSize: '13px', borderRadius: 'var(--radius-md)' },
+      md: { height: '44px', padding: '0 24px', fontSize: '15px', borderRadius: 'var(--radius-md)' },
+      lg: { height: '52px', padding: '0 32px', fontSize: '16px', borderRadius: 'var(--radius-md)' },
+    }
+
+    const variants: Record<NonNullable<ButtonProps['variant']>, React.CSSProperties> = {
+      primary: { background: 'var(--accent-primary)', color: 'var(--text-inverse)', border: 'none' },
+      secondary: { background: 'transparent', border: '1.5px solid var(--border-strong)', color: 'var(--text-primary)' },
+      ghost: { background: 'transparent', border: 'none', color: 'var(--text-secondary)' },
+      danger: { background: 'var(--danger)', color: 'var(--text-inverse)', border: 'none' },
+      outline: { background: 'transparent', border: '2px solid var(--accent-primary)', color: 'var(--accent-primary)' },
+    }
+
+    // Tailwind classes for hover/active/focus (CSS-in-JS can't do pseudo-classes cleanly)
+    const hoverClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
+      primary: 'hover:bg-[#155BB0] hover:-translate-y-px hover:shadow-md active:scale-[0.97]',
+      secondary: 'hover:border-[#1A6BCC] hover:text-[#1A6BCC] hover:bg-[#EBF3FF] active:scale-[0.97]',
+      ghost: 'hover:text-[#1A6BCC] hover:bg-[#EBF3FF] active:scale-[0.97]',
+      danger: 'hover:bg-red-700 active:scale-[0.97]',
+      outline: 'hover:bg-[#1A6BCC] hover:text-white active:scale-[0.97]',
+    }
 
     return (
       <button
         ref={ref}
         disabled={isDisabled}
-        className={cn(
-          'inline-flex items-center justify-center',
-          'font-sans font-medium',
-          'transition-all duration-150 ease-out',
-          'active:scale-[0.98]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A6BCC]/50 focus-visible:ring-offset-2',
-          'disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100',
-          'select-none',
-          variantClasses[variant],
-          sizeClasses[size],
-          fullWidth ? 'w-full' : '',
-          className
-        )}
+        style={{ ...base, ...sizes[size], ...variants[variant], ...style }}
+        className={`select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A6BCC]/50 focus-visible:ring-offset-2 ${!isDisabled ? hoverClasses[variant] : ''} transition-all duration-150 ease-out ${className}`}
         {...props}
       >
         {isLoading ? (

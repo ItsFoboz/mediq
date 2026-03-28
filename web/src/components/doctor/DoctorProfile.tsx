@@ -52,7 +52,7 @@ export default function DoctorProfile({ doctor }: DoctorProfileProps) {
           <div className="flex-1 text-center md:text-left">
             <div className="flex flex-wrap items-start gap-2 justify-center md:justify-between">
               <div>
-                <h1 className="text-2xl md:text-3xl font-serif font-bold text-[#0F172A]">{doctor.name}</h1>
+                <h1 className="text-2xl md:text-3xl text-[#0F172A]" style={{ fontFamily: 'var(--font-display)' }}>{doctor.name}</h1>
                 <p className="text-[#64748B] mt-1">
                   {doctor.specialty.name_en}{' '}
                   <span className="text-[#94A3B8]">({doctor.specialty.name_bg})</span>
@@ -94,7 +94,7 @@ export default function DoctorProfile({ doctor }: DoctorProfileProps) {
           <div className="hidden md:block w-64 flex-shrink-0">
             <div className="bg-[#F7F9FC] rounded-[12px] p-4 border border-[#E2E8F0]">
               <p className="text-xs text-[#94A3B8] mb-1">Consultation from</p>
-              <p className="text-2xl font-bold text-[#0F172A] tabular-nums">
+              <p className="text-3xl text-[#0F172A] tabular-nums leading-none" style={{ fontFamily: 'var(--font-display)' }}>
                 {doctor.price_consultation_bgn} BGN
               </p>
               <p className="text-sm text-[#94A3B8]">
@@ -257,15 +257,17 @@ export default function DoctorProfile({ doctor }: DoctorProfileProps) {
       )}
 
       {/* Mobile sticky book button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-[#E2E8F0] md:hidden z-30">
-        <Button
-          variant="primary"
-          fullWidth
-          size="lg"
-          onClick={() => navigate(`/book/${doctor.id}`)}
-        >
-          Book Appointment — {doctor.price_consultation_bgn} BGN
-        </Button>
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E2E8F0] md:hidden z-30"
+           style={{ padding: '12px 20px', paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-xs text-[#94A3B8]">From</p>
+            <p className="text-lg font-bold text-[#0F172A] leading-none">{doctor.price_consultation_bgn} BGN</p>
+          </div>
+          <Button variant="primary" size="lg" onClick={() => navigate(`/book/${doctor.id}`)}>
+            Book Appointment
+          </Button>
+        </div>
       </div>
     </div>
   )

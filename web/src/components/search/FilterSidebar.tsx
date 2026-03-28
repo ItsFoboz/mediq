@@ -17,7 +17,7 @@ function Section({ title, children, defaultOpen = true }: { title: string; child
     <div className="border-b border-[#E2E8F0] py-4">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full text-sm font-semibold text-[#0F172A] mb-0"
+        className="flex items-center justify-between w-full mb-0" style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)' }}
       >
         {title}
         <ChevronDown size={16} className={`text-[#94A3B8] transition-transform ${open ? 'rotate-180' : ''}`} />
@@ -61,6 +61,26 @@ export default function FilterSidebar({ isMobile, onClose }: FilterSidebarProps)
         </div>
       </div>
 
+      {/* Speaks English — prominent toggle */}
+      <div
+        className="flex items-center justify-between rounded-xl p-3 mb-4 cursor-pointer"
+        style={{
+          background: 'var(--accent-secondary-light)',
+          border: '1px solid rgba(13, 158, 110, 0.25)',
+        }}
+      >
+        <span className="text-sm font-semibold text-[#0D9E6E]">Speaks English</span>
+        <button
+          type="button"
+          onClick={() => store.setFilter('speaks_english', !store.filters.speaks_english)}
+          className={`relative inline-flex h-5 w-9 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0D9E6E]/50 ${store.filters.speaks_english ? 'bg-[#0D9E6E]' : 'bg-[#CBD5E1]'}`}
+          aria-pressed={store.filters.speaks_english}
+          aria-label="Filter English-speaking doctors"
+        >
+          <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${store.filters.speaks_english ? 'translate-x-4' : 'translate-x-0'}`} />
+        </button>
+      </div>
+
       <Section title="Specialty">
         {specialties.map((s) => (
           <label key={s.id} className="flex items-center gap-2.5 cursor-pointer">
@@ -91,10 +111,6 @@ export default function FilterSidebar({ isMobile, onClose }: FilterSidebarProps)
         ))}
       </Section>
 
-      <Section title="Language">
-        <Toggle label="Speaks English" checked={store.filters.speaks_english} onChange={() => store.setFilter('speaks_english', !store.filters.speaks_english)} />
-      </Section>
-
       <Section title="Insurance & Pricing">
         <Toggle label="Accepts NHIF" checked={store.filters.accepts_nhif} onChange={() => store.setFilter('accepts_nhif', !store.filters.accepts_nhif)} />
         <Toggle label="Private only" checked={store.filters.private_only} onChange={() => store.setFilter('private_only', !store.filters.private_only)} />
@@ -103,7 +119,8 @@ export default function FilterSidebar({ isMobile, onClose }: FilterSidebarProps)
           <select
             value={store.filters.insurer}
             onChange={(e) => store.setFilter('insurer', e.target.value)}
-            className="w-full text-sm border border-[#E2E8F0] rounded-lg px-3 py-2 text-[#0F172A] bg-white outline-none focus:border-[#1A6BCC]"
+            className="w-full border border-[#E2E8F0] rounded-lg px-3 outline-none focus:border-[#1A6BCC] focus:shadow-[0_0_0_3px_rgba(26,107,204,0.12)] transition-all"
+            style={{ height: '40px', fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--text-primary)', background: 'white' }}
           >
             <option value="">Any insurer</option>
             {BULGARIAN_INSURERS.map((ins) => (

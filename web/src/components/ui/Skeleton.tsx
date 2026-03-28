@@ -26,19 +26,33 @@ interface SkeletonProps {
   rounded?: string
 }
 
+const shimmerStyle: React.CSSProperties = {
+  background: 'linear-gradient(90deg, var(--bg-elevated, #EEF2F8) 0%, #E8EDF4 50%, var(--bg-elevated, #EEF2F8) 100%)',
+  backgroundSize: '200% 100%',
+  animation: 'skeleton-shimmer 1.5s ease-in-out infinite',
+}
+
+// Inject shimmer keyframes once
+if (typeof document !== 'undefined' && !document.getElementById('skeleton-shimmer-style')) {
+  const style = document.createElement('style')
+  style.id = 'skeleton-shimmer-style'
+  style.textContent = `@keyframes skeleton-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`
+  document.head.appendChild(style)
+}
+
 const Skeleton: React.FC<SkeletonProps> = ({
   width,
   height,
   className,
   rounded = 'rounded-md',
 }) => {
-  const style: React.CSSProperties = {}
+  const style: React.CSSProperties = { ...shimmerStyle }
   if (width !== undefined) style.width = typeof width === 'number' ? `${width}px` : width
   if (height !== undefined) style.height = typeof height === 'number' ? `${height}px` : height
 
   return (
     <div
-      className={cn('animate-pulse bg-[#E2E8F0]', rounded, className)}
+      className={cn(rounded, className)}
       style={style}
       aria-hidden="true"
     />
@@ -108,40 +122,41 @@ interface SkeletonCardProps {
 const SkeletonCard: React.FC<SkeletonCardProps> = ({ className }) => {
   return (
     <div
-      className={cn(
-        'bg-white rounded-card p-4 shadow-[var(--shadow-card)] flex gap-4',
-        className
-      )}
+      className={cn('bg-white border border-[#E2E8F0] rounded-xl overflow-hidden', className)}
+      style={{ boxShadow: 'var(--shadow-card)' }}
       aria-hidden="true"
     >
-      {/* Doctor photo placeholder */}
-      <Skeleton width={80} height={80} rounded="rounded-xl" className="flex-shrink-0" />
+      <div className="p-5 pr-10">
+        <div className="flex gap-4">
+          {/* Left: photo */}
+          <Skeleton width={72} height={72} rounded="rounded-full" className="flex-shrink-0" />
 
-      {/* Info */}
-      <div className="flex-1 flex flex-col gap-3 min-w-0">
-        {/* Name */}
-        <Skeleton height={18} width="70%" rounded="rounded" />
+          {/* Middle: info */}
+          <div className="flex-1 flex flex-col gap-2 min-w-0">
+            <Skeleton height={16} width="60%" rounded="rounded" />
+            <Skeleton height={13} width="40%" rounded="rounded" />
+            {/* Badges */}
+            <div className="flex gap-1.5 flex-wrap mt-1">
+              <Skeleton height={20} width={100} rounded="rounded-full" />
+              <Skeleton height={20} width={52} rounded="rounded-full" />
+            </div>
+            {/* Stars */}
+            <Skeleton height={13} width={100} rounded="rounded" />
+            {/* Location */}
+            <Skeleton height={13} width="55%" rounded="rounded" />
+          </div>
 
-        {/* Specialty */}
-        <Skeleton height={14} width="45%" rounded="rounded" />
-
-        {/* Stars row */}
-        <div className="flex items-center gap-2">
-          <Skeleton height={14} width={80} rounded="rounded" />
-          <Skeleton height={14} width={36} rounded="rounded" />
+          {/* Right: price (hidden on mobile) */}
+          <div className="hidden sm:flex flex-col items-end gap-1 flex-shrink-0 min-w-[80px]">
+            <Skeleton height={24} width={48} rounded="rounded" />
+            <Skeleton height={11} width={32} rounded="rounded" />
+          </div>
         </div>
-
-        {/* Badges row */}
-        <div className="flex gap-2 flex-wrap">
-          <Skeleton height={22} width={72} rounded="rounded-full" />
-          <Skeleton height={22} width={88} rounded="rounded-full" />
-        </div>
-
-        {/* Location + price */}
-        <div className="flex items-center justify-between mt-auto pt-1">
-          <Skeleton height={13} width="50%" rounded="rounded" />
-          <Skeleton height={13} width={56} rounded="rounded" />
-        </div>
+      </div>
+      {/* CTA row */}
+      <div className="px-5 pb-5 flex items-center justify-between gap-3">
+        <Skeleton height={13} width={72} rounded="rounded" className="sm:hidden" />
+        <Skeleton height={36} width={140} rounded="rounded-lg" className="ml-auto" />
       </div>
     </div>
   )

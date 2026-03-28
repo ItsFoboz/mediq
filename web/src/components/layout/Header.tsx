@@ -30,7 +30,7 @@ const Logo: React.FC = () => (
         <rect x="2" y="7.5" width="14" height="3" rx="1.5" />
       </svg>
     </span>
-    <span className="font-serif font-bold text-xl text-[#0F172A] tracking-tight leading-none">
+    <span className="leading-none" style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: 'var(--accent-primary)', fontWeight: 400, letterSpacing: '-0.02em' }}>
       MEDIQ
     </span>
   </Link>
@@ -269,7 +269,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
                       block px-4 py-3 rounded-lg text-sm font-medium
                       transition-colors duration-150
                       ${active
-                        ? 'bg-[#1A6BCC]/10 text-[#1A6BCC]'
+                        ? 'bg-[#EBF3FF] text-[#1A6BCC]'
                         : 'text-[#0F172A] hover:bg-[#F7F9FC]'
                       }
                     `}
@@ -331,14 +331,7 @@ const Header: React.FC = () => {
   return (
     <>
       <header
-        className={`
-          sticky top-0 z-50
-          transition-all duration-300
-          ${scrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-[#E2E8F0]/60'
-            : 'bg-transparent'
-          }
-        `}
+        className="sticky top-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-[12px] border-b border-[#E2E8F0]"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -360,7 +353,7 @@ const Header: React.FC = () => {
                       transition-colors duration-150
                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A6BCC]/50
                       ${active
-                        ? 'text-[#1A6BCC]'
+                        ? 'text-[#1A6BCC] bg-[#EBF3FF] rounded-lg'
                         : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F7F9FC]'
                       }
                     `}

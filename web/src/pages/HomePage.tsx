@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  Users, MapPin, CheckCircle, Shield,
+  Users, MapPin, Calendar, Shield,
   Stethoscope, Heart, Scan, Baby, Brain,
   Smile, Bone, Activity, Ear,
-  Search, Star, Calendar, ArrowRight,
+  Search, Star, ArrowRight,
   Building2, Quote
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -13,33 +13,132 @@ import { Badge } from '@/components/ui/Badge'
 import { StarRating } from '@/components/ui/StarRating'
 import { doctors } from '@/data/doctors'
 import { specialties } from '@/data/specialties'
+import { cities } from '@/data/cities'
 
 // ─── Inline SearchBar for hero ─────────────────────────────────────────────
 
 const HeroSearch: React.FC = () => {
   const [query, setQuery] = useState('')
+  const [city, setCity] = useState('')
+  const [speaksEnglish, setSpeaksEnglish] = useState(true)
   const navigate = useNavigate()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    navigate(`/doctors${query ? `?q=${encodeURIComponent(query)}` : ''}`)
+    const params = new URLSearchParams()
+    if (query) params.set('q', query)
+    if (city) params.set('city', city)
+    if (speaksEnglish) params.set('speaks_english', 'true')
+    navigate(`/doctors?${params.toString()}`)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-2xl mx-auto">
-      <div className="flex flex-1 items-center bg-white rounded-l-xl border-2 border-r-0 border-[#E2E8F0] px-4 gap-3 focus-within:border-[#1A6BCC] transition-colors">
-        <Search className="text-[#94A3B8] flex-shrink-0" size={20} />
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Doctor name, specialty, or symptom..."
-          className="flex-1 py-4 text-base text-[#0F172A] placeholder-[#94A3B8] outline-none bg-transparent"
-        />
+    <form
+      onSubmit={handleSubmit}
+      className="w-full max-w-3xl mx-auto"
+    >
+      {/* Desktop: single bar */}
+      <div
+        className="hidden md:flex items-center bg-white rounded-2xl p-2 gap-0"
+        style={{ boxShadow: 'var(--shadow-lg)' }}
+      >
+        {/* Specialty input */}
+        <div className="flex items-center flex-[2] px-4 min-w-0">
+          <Search size={16} className="text-[#94A3B8] flex-shrink-0 mr-2.5" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Doctor, specialty, or symptom…"
+            className="flex-1 outline-none bg-transparent placeholder-[#94A3B8] text-[#0F172A] font-medium text-[15px] py-3"
+          />
+        </div>
+        <div className="w-px h-6 bg-[#E2E8F0] flex-shrink-0" />
+        {/* City select */}
+        <div className="flex items-center flex-1 px-4 min-w-0">
+          <MapPin size={16} className="text-[#94A3B8] flex-shrink-0 mr-2.5" />
+          <select
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="flex-1 outline-none bg-transparent text-[#0F172A] font-medium text-[15px] py-3 appearance-none cursor-pointer"
+          >
+            <option value="">All cities</option>
+            {cities.map((c) => (
+              <option key={c.slug} value={c.name}>{c.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="w-px h-6 bg-[#E2E8F0] flex-shrink-0" />
+        {/* Speaks English toggle */}
+        <div className="flex items-center gap-2.5 px-4 flex-shrink-0">
+          <span className="text-[13px] font-medium text-[#64748B] whitespace-nowrap">Speaks English</span>
+          <button
+            type="button"
+            onClick={() => setSpeaksEnglish(!speaksEnglish)}
+            className={`relative inline-flex h-5 w-9 rounded-full transition-colors flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A6BCC]/50 ${speaksEnglish ? 'bg-[#0D9E6E]' : 'bg-[#CBD5E1]'}`}
+            aria-pressed={speaksEnglish}
+            aria-label="Filter by English-speaking doctors"
+          >
+            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${speaksEnglish ? 'translate-x-4' : 'translate-x-0'}`} />
+          </button>
+        </div>
+        {/* Search button */}
+        <button
+          type="submit"
+          className="flex items-center gap-2 bg-[#1A6BCC] hover:bg-[#155BB0] text-white px-7 rounded-xl font-semibold text-[15px] flex-shrink-0 hover:-translate-y-px hover:shadow-md transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A6BCC]/50"
+          style={{ height: '44px' }}
+        >
+          <Search size={16} />
+          Search
+        </button>
       </div>
-      <Button type="submit" size="lg" className="rounded-l-none rounded-r-xl px-8">
-        Search
-      </Button>
+
+      {/* Mobile: stacked */}
+      <div
+        className="flex md:hidden flex-col gap-2 bg-white rounded-2xl p-3"
+        style={{ boxShadow: 'var(--shadow-lg)' }}
+      >
+        <div className="flex items-center border border-[#E2E8F0] rounded-xl px-3 focus-within:border-[#1A6BCC] transition-colors">
+          <Search size={16} className="text-[#94A3B8] flex-shrink-0 mr-2" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Doctor, specialty, or symptom…"
+            className="flex-1 outline-none bg-transparent placeholder-[#94A3B8] text-[#0F172A] text-sm py-3"
+          />
+        </div>
+        <div className="flex gap-2">
+          <select
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="flex-1 border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-sm text-[#0F172A] bg-white outline-none focus:border-[#1A6BCC]"
+          >
+            <option value="">All cities</option>
+            {cities.map((c) => (
+              <option key={c.slug} value={c.name}>{c.name}</option>
+            ))}
+          </select>
+          <label className="flex items-center gap-2 px-3 border border-[#E2E8F0] rounded-xl cursor-pointer">
+            <span className="text-xs font-medium text-[#64748B] whitespace-nowrap">English</span>
+            <button
+              type="button"
+              onClick={() => setSpeaksEnglish(!speaksEnglish)}
+              className={`relative inline-flex h-5 w-9 rounded-full transition-colors flex-shrink-0 ${speaksEnglish ? 'bg-[#0D9E6E]' : 'bg-[#CBD5E1]'}`}
+              aria-pressed={speaksEnglish}
+            >
+              <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${speaksEnglish ? 'translate-x-4' : 'translate-x-0'}`} />
+            </button>
+          </label>
+        </div>
+        <button
+          type="submit"
+          className="w-full flex items-center justify-center gap-2 bg-[#1A6BCC] hover:bg-[#155BB0] text-white py-3 rounded-xl font-semibold text-[15px] transition-all duration-150"
+        >
+          <Search size={16} />
+          Search
+        </button>
+      </div>
     </form>
   )
 }
@@ -154,14 +253,44 @@ const HomePage: React.FC = () => {
   const topDoctors = [...doctors].sort((a, b) => b.rating_average - a.rating_average).slice(0, 6)
 
   return (
-    <div className="min-h-screen bg-[#F7F9FC]">
+    <motion.div
+      className="min-h-screen bg-[#F7F9FC]"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+    >
 
       {/* ── Hero ── */}
       <section
-        className="relative overflow-hidden"
-        style={{ background: 'linear-gradient(160deg, #EEF5FF 0%, #F7F9FC 100%)' }}
+        className="pt-20 pb-24"
+        style={{
+          background: 'linear-gradient(160deg, #EBF3FF 0%, #F7F9FC 50%, #E6F7F2 100%)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
       >
-        <div className="max-w-6xl mx-auto px-4 pt-20 pb-16 text-center">
+        {/* Decorative blur circle */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: '-200px', right: '-200px',
+            width: '600px', height: '600px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(26,107,204,0.08) 0%, transparent 70%)',
+            zIndex: 0,
+          }}
+          aria-hidden="true"
+        />
+        {/* Noise texture */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E\")",
+            zIndex: 0,
+          }}
+          aria-hidden="true"
+        />
+        <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -170,10 +299,16 @@ const HomePage: React.FC = () => {
             <Badge variant="blue" className="mb-6">
               Healthcare in Bulgaria, in English
             </Badge>
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal text-[#0F172A] leading-tight mb-6 max-w-4xl mx-auto">
+            <h1
+              className="font-serif text-[#0F172A] mb-6 max-w-3xl mx-auto"
+              style={{ fontSize: 'clamp(2.2rem, 5vw, 3.4rem)', lineHeight: 1.15, letterSpacing: '-0.02em' }}
+            >
               Find a doctor in Bulgaria who speaks your language
             </h1>
-            <p className="text-lg md:text-xl text-[#64748B] mb-10 max-w-2xl mx-auto leading-relaxed">
+            <p
+              className="text-lg text-[#64748B] mb-10 max-w-xl mx-auto"
+              style={{ lineHeight: 1.6 }}
+            >
               Book appointments online with English-speaking specialists across Bulgaria.
               No Bulgarian required.
             </p>
@@ -201,16 +336,19 @@ const HomePage: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 py-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { icon: Users, label: '1,500+ English-speaking doctors' },
-              { icon: MapPin, label: 'All major Bulgarian cities' },
-              { icon: CheckCircle, label: 'Free to use' },
-              { icon: Shield, label: 'GDPR compliant' },
-            ].map(({ icon: Icon, label }) => (
+              { icon: Users, num: '1,500+', label: 'English-speaking doctors' },
+              { icon: MapPin, num: '28', label: 'Bulgarian cities covered' },
+              { icon: Calendar, num: 'Free', label: 'to search and book' },
+              { icon: Shield, num: 'GDPR', label: 'compliant & secure' },
+            ].map(({ icon: Icon, num, label }) => (
               <div key={label} className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#EEF5FF] flex items-center justify-center flex-shrink-0">
-                  <Icon size={16} className="text-[#1A6BCC]" />
+                <div className="w-10 h-10 rounded-full bg-[#EBF3FF] flex items-center justify-center flex-shrink-0">
+                  <Icon size={20} className="text-[#1A6BCC]" />
                 </div>
-                <span className="text-sm font-medium text-[#0F172A]">{label}</span>
+                <div>
+                  <p className="font-serif text-xl text-[#0F172A] leading-none">{num}</p>
+                  <p className="text-[13px] text-[#64748B] mt-0.5">{label}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -230,17 +368,17 @@ const HomePage: React.FC = () => {
               <Link
                 key={specialty.slug}
                 to={`/specialties/${specialty.slug}`}
-                className="group p-5 bg-white rounded-xl border border-[#E2E8F0] hover:border-[#1A6BCC]/40 hover:shadow-md transition-all text-left"
+                className="group p-5 bg-white rounded-xl border border-[#E2E8F0] hover:bg-[#1A6BCC] hover:border-[#1A6BCC] hover:-translate-y-0.5 hover:shadow-md transition-all text-left cursor-pointer no-underline"
               >
-                <div className="w-10 h-10 rounded-lg bg-[#EEF5FF] flex items-center justify-center mb-3 group-hover:bg-[#1A6BCC] transition-colors">
-                  <IconComp size={18} className="text-[#1A6BCC] group-hover:text-white transition-colors" />
+                <div className="w-12 h-12 rounded-lg bg-[#EBF3FF] flex items-center justify-center mb-3 group-hover:bg-white/20 transition-colors">
+                  <IconComp size={22} className="text-[#1A6BCC] group-hover:text-white transition-colors" />
                 </div>
-                <p className="font-semibold text-[#0F172A] text-sm">{specialty.name_en}</p>
-                <p className="text-xs text-[#94A3B8] mb-1">{specialty.name_bg}</p>
-                <p className="text-xs text-[#64748B] line-clamp-2 mb-2">
+                <p className="font-semibold text-[#0F172A] text-sm group-hover:text-white transition-colors">{specialty.name_en}</p>
+                <p className="text-xs text-[#94A3B8] mb-1 group-hover:text-white/70 transition-colors">{specialty.name_bg}</p>
+                <p className="text-xs text-[#64748B] line-clamp-2 mb-2 group-hover:text-white/80 transition-colors">
                   {specialty.description_en.split('.')[0]}.
                 </p>
-                <span className="text-xs font-medium text-[#1A6BCC]">
+                <span className="text-xs font-medium text-[#1A6BCC] group-hover:text-white/90 transition-colors">
                   {specialty.doctor_count} doctor{specialty.doctor_count !== 1 ? 's' : ''}
                 </span>
               </Link>
@@ -262,8 +400,16 @@ const HomePage: React.FC = () => {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {topDoctors.map((doctor) => (
-              <CompactDoctorCard key={doctor.id} doctor={doctor} />
+            {topDoctors.map((doctor, index) => (
+              <motion.div
+                key={doctor.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.05, duration: 0.3 }}
+              >
+                <CompactDoctorCard doctor={doctor} />
+              </motion.div>
             ))}
           </div>
           <div className="mt-6 text-center md:hidden">
@@ -428,7 +574,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-    </div>
+    </motion.div>
   )
 }
 
